@@ -31,6 +31,7 @@ project-specific build file ("project_id"/"project_id".build.xml) for the
     <!-- Ensure basedir is properly set -->
     <property name="d4j.workdir" value="${basedir}" />
     <property name="d4j.properties" value="defects4j.build.properties" />
+    <property name="knarr.dir" value="SET_PATH_TO_KNARR" />
     <fail message="Directory ${d4j.workdir} is not a Defects4J working directory!">
         <condition>
             <not> <available file="${d4j.workdir}/${d4j.properties}" /> </not>
@@ -99,7 +100,14 @@ project-specific build file ("project_id"/"project_id".build.xml) for the
     Run developer-written tests
 -->
     <target name="run.dev.tests" depends="compile.tests,update.all.tests" description="Run unit tests">
-        <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="no" showOutput="true">
+        <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="yes" showOutput="true"
+                jvm="${knarr.dir}/knarr/target/jre-inst/bin/java"
+            >
+                <jvmarg value="-Xdebug" />
+                <jvmarg value="-Xrunjdwp:server=y,transport=dt_socket,address=5555,suspend=n" />
+               <jvmarg value="-Xss1G" />
+               <jvmarg value="-Xbootclasspath/p:${knarr.dir}/knarr/target/Knarr-0.0.2-SNAPSHOT.jar" />
+               <jvmarg value="-javaagent:${knarr.dir}/knarr/target/Knarr-0.0.2-SNAPSHOT.jar" />
             <classpath>
                 <!-- Make sure that instrumented classes appear at the beginning of the
                      classpath -->
